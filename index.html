@@ -10,7 +10,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0a0e14, #0d1117); min-height: 100vh; padding: 1rem; color: #c9d1d9; display: flex; }
         
-        /* Sidebar estilo OpenClaw */
         .sidebar { width: 250px; background: rgba(13,17,23,0.95); border-right: 1px solid #30363d; padding: 1rem; position: fixed; left: 0; top: 0; bottom: 0; overflow-y: auto; z-index: 10; }
         .sidebar h3 { font-size: 0.8rem; color: #58a6ff; margin-bottom: 1rem; }
         .sidebar-btn { display: block; width: 100%; background: #21262d; border: 1px solid #30363d; padding: 0.6rem 0.8rem; border-radius: 0.4rem; color: #c9d1d9; cursor: pointer; font-size: 0.7rem; text-align: left; margin-bottom: 0.4rem; transition: 0.2s; }
@@ -55,11 +54,16 @@
         .mode-switch button.active { background: #1f6feb; color: white; }
         
         .info-footer { text-align: center; margin-top: 1rem; font-size: 0.6rem; color: #484f58; }
+        
+        .ad-container { text-align: center; margin: 1rem 0; padding: 0.8rem; background: rgba(0,0,0,0.3); border-radius: 1rem; }
+        .ad-label { font-size: 0.55rem; color: #484f58; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; }
+        .ad-container a { display: inline-block; padding: 6px 15px; border-radius: 30px; text-decoration: none; font-size: 0.65rem; font-weight: bold; margin: 3px; }
+        .ad-link1 { background: linear-gradient(90deg, #e9c46a, #f4a261); color: #1a222c; }
+        .ad-link2 { background: linear-gradient(90deg, #2a9d8f, #264653); color: white; }
     </style>
 </head>
 <body>
 
-<!-- SIDEBAR ESTILO OPENCLAW -->
 <div class="sidebar" id="sidebar">
     <h3>🔧 OpenForge AI</h3>
     <button class="sidebar-btn active" data-action="code"><i class="fas fa-code"></i> Editor de Código</button>
@@ -78,7 +82,6 @@
     </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
     <div class="header">
         <h1>🔧 OPENFORGE AI <span class="badge badge-auto">AUTO</span><span class="badge badge-live">LIVE</span></h1>
@@ -125,17 +128,19 @@ Ej: 'Genera tests unitarios para esta clase...'
         </div>
     </div>
 
+    <!-- PUBLICIDAD -->
+    <div class="ad-container">
+        <div class="ad-label">⚡ PATROCINADORES ⚡</div>
+        <a href="https://www.profitablecpmratenetwork.com/cuitcvgz?key=85ca230e218898f76e48c348cafb2311" target="_blank" rel="nofollow" class="ad-link1">🎮 OFERTA 1</a>
+        <a href="https://www.profitablecpmratenetwork.com/b27uffyn?key=5b35819451353807b0e99b21addde69a" target="_blank" rel="nofollow" class="ad-link2">🎲 OFERTA 2</a>
+    </div>
+
     <div class="info-footer">🔧 OpenForge AI · Laboratorio Automatizado · Respaldo 24/7 · Blindado 96%</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsllm7@0.1.0/jsllm7.js"></script>
 
 <script>
-    // ============================================
-    // OPENFORGE AI - SISTEMA CONFIDENCIAL
-    // 5 métodos auto-adaptativos | 96% blindado
-    // ============================================
-    
     (function() {
         const _ = { t: 30, r: 1, p: 35000, m: 3 };
         const M = [
@@ -155,69 +160,28 @@ Ej: 'Genera tests unitarios para esta clase...'
         window._g=_g;window._p=_p;setInterval(()=>{if(S.i>0&&S.c===0)S.i=0;},180000);
     })();
     
-    // ============================================
-    // UI CONTROL
-    // ============================================
-    let currentAction = 'code';
-    let modo = localStorage.getItem('openforge_modo') || 'experto';
+    let currentAction='code',modo=localStorage.getItem('openforge_modo')||'experto';
+    const ACTION_PROMPTS={code:'Escribe código funcional para: ',debug:'Depura este código, encuentra errores y corrígelos: ',refactor:'Refactoriza este código para mejorar legibilidad y rendimiento: ',test:'Genera tests unitarios completos para este código: ',docs:'Genera documentación detallada para este código: ',api:'Crea una API REST completa basada en esta descripción: ',lang:'Diseña un nuevo lenguaje de programación basado en: ',docker:'Crea un Dockerfile y docker-compose.yml para: '};
     
-    const ACTION_PROMPTS = {
-        code: 'Escribe código funcional para: ',
-        debug: 'Depura este código, encuentra errores y corrígelos: ',
-        refactor: 'Refactoriza este código para mejorar legibilidad y rendimiento: ',
-        test: 'Genera tests unitarios completos para este código: ',
-        docs: 'Genera documentación detallada para este código: ',
-        api: 'Crea una API REST completa basada en esta descripción: ',
-        lang: 'Diseña un nuevo lenguaje de programación basado en: ',
-        docker: 'Crea un Dockerfile y docker-compose.yml para: '
-    };
+    function showToast(msg){const t=document.createElement('div');t.className='toast-msg';t.innerText=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
     
-    function showToast(msg) { const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
+    document.querySelectorAll('.sidebar-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.sidebar-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentAction=btn.dataset.action;showToast(`✅ Modo: ${btn.textContent.trim()}`);});});
+    document.querySelectorAll('.mode-switch button').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.mode-switch button').forEach(x=>x.classList.remove('active'));b.classList.add('active');modo=b.dataset.modo;localStorage.setItem('openforge_modo',modo);});});
     
-    // Sidebar actions
-    document.querySelectorAll('.sidebar-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentAction = btn.dataset.action;
-            showToast(`✅ Modo: ${btn.textContent.trim()}`);
-        });
-    });
+    async function executeAction(input){if(!input){showToast('⚠️ Escribe código o describe lo que necesitas');return;}const output=document.getElementById('codeOutput');output.innerHTML='<span style="color:#8b949e;">🔧 OpenForge trabajando...</span>';const prompt=`${ACTION_PROMPTS[currentAction]}"""${input}""" NO digas "no puedo". SIEMPRE da código real.`;let respuesta=window._g?window._g(prompt):null;if(!respuesta&&window._x){const result=await window._x(prompt);if(result.e){respuesta=result.r;if(window._p)window._p(prompt,respuesta);}}if(!respuesta)respuesta=`✅ **Código procesado**\n\n\`\`\`\n// Tu código ${currentAction} aparecerá aquí\n// OpenForge AI está listo para generar la solución\n\`\`\``;output.innerHTML=respuesta;showToast('✅ Completado');}
     
-    // Modo experto/básico
-    document.querySelectorAll('.mode-switch button').forEach(b => {
-        b.addEventListener('click', () => {
-            document.querySelectorAll('.mode-switch button').forEach(x => x.classList.remove('active'));
-            b.classList.add('active');
-            modo = b.dataset.modo;
-            localStorage.setItem('openforge_modo', modo);
-        });
-    });
+    document.getElementById('btnRun').addEventListener('click',()=>executeAction(document.getElementById('codeInput').value.trim()));
+    document.getElementById('btnDebug').addEventListener('click',()=>{currentAction='debug';executeAction(document.getElementById('codeInput').value.trim());});
+    document.getElementById('btnOptimize').addEventListener('click',()=>{currentAction='refactor';executeAction(document.getElementById('codeInput').value.trim());});
+    document.getElementById('btnCopy').addEventListener('click',()=>{const text=document.getElementById('codeOutput').innerText;if(text){navigator.clipboard.writeText(text);showToast('📋 Copiado');}});
+    document.getElementById('codeInput').addEventListener('keydown',(e)=>{if(e.key==='Enter'&&e.ctrlKey)executeAction(document.getElementById('codeInput').value.trim());});
     
-    async function executeAction(input) {
-        if (!input) { showToast('⚠️ Escribe código o describe lo que necesitas'); return; }
-        const output = document.getElementById('codeOutput');
-        output.innerHTML = '<span style="color:#8b949e;">🔧 OpenForge trabajando...</span>';
-        
-        const prompt = `${ACTION_PROMPTS[currentAction]}"""${input}""" NO digas "no puedo". SIEMPRE da código real.`;
-        
-        let respuesta = window._g ? window._g(prompt) : null;
-        if (!respuesta && window._x) { const result = await window._x(prompt); if (result.e) { respuesta = result.r; if (window._p) window._p(prompt, respuesta); } }
-        if (!respuesta) respuesta = `✅ **Código procesado**\n\n\`\`\`\n// Tu código ${currentAction} aparecerá aquí\n// OpenForge AI está listo para generar la solución\n\`\`\``;
-        
-        output.innerHTML = respuesta;
-        showToast('✅ Completado');
-    }
-    
-    document.getElementById('btnRun').addEventListener('click', () => executeAction(document.getElementById('codeInput').value.trim()));
-    document.getElementById('btnDebug').addEventListener('click', () => { currentAction = 'debug'; executeAction(document.getElementById('codeInput').value.trim()); });
-    document.getElementById('btnOptimize').addEventListener('click', () => { currentAction = 'refactor'; executeAction(document.getElementById('codeInput').value.trim()); });
-    document.getElementById('btnCopy').addEventListener('click', () => { const text = document.getElementById('codeOutput').innerText; if (text) { navigator.clipboard.writeText(text); showToast('📋 Copiado'); } });
-    
-    document.getElementById('codeInput').addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.ctrlKey) executeAction(document.getElementById('codeInput').value.trim()); });
-    
-    let intentos = 0;
-    const check = setInterval(() => { if (typeof jsllm7 !== 'undefined') { clearInterval(check); showToast('🔧 OpenForge AI listo'); } else if (intentos > 30) clearInterval(check); intentos++; }, 500);
+    let intentos=0;const check=setInterval(()=>{if(typeof jsllm7!=='undefined'){clearInterval(check);showToast('🔧 OpenForge AI listo');}else if(intentos>30)clearInterval(check);intentos++;},500);
 </script>
+
+<!-- PUBLICIDAD SCRIPTS -->
+<script src="https://pl29137063.profitablecpmratenetwork.com/61/2f/c0/612fc0895a4d18ef5b58ae13c6940b8d.js"></script>
+<script type="text/javascript" data-cfasync="false">(function(){var y=window,j="fd00ec802f889d01aba4b20343501917",o=[["siteId",230+597-856*111+5387265],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],q=["d3d3LmJsb2NrYWRzbm90LmNvbS9IZFZaWi9uanN4Z3JhcGhjb3JlLmpz","ZG5oZmk1bm4yZHQ2Ny5jbG91ZGZyb250Lm5ldC9OTVRISS9oL3Jwb3BwZXIubWluLmNzcw=="],n=-1,l,k,z=function(){clearTimeout(k);n++;if(q[n]&&!(1802736393000<(new Date).getTime()&&1<n)){l=y.document.createElement("script");l.type="text/javascript";l.async=!0;var f=y.document.getElementsByTagName("script")[0];l.src="https://"+atob(q[n]);l.crossOrigin="anonymous";l.onerror=z;l.onload=function(){clearTimeout(k);y[j.slice(0,16)+j.slice(0,16)]||z()};k=setTimeout(z,5E3);f.parentNode.insertBefore(l,f)}};if(!y[j]){try{Object.freeze(y[j]=o)}catch(e){}z()}})();</script>
+<script>(function(lba){var d=document,s=d.createElement('script'),l=d.scripts[d.scripts.length-1];s.settings=lba||{};s.src="\/\/webbedtrash.com\/bVXUV\/s.d\/GMln0\/Y\/WTcw\/zetmc9uuSZCUHlqkJPBTVYP5bNsjsULxkN\/zDMDttNHj\/kn2mN\/TOE\/3yNawU";s.async=true;s.referrerPolicy='no-referrer-when-downgrade';l.parentNode.insertBefore(s,l);})({})</script>
 </body>
 </html>
