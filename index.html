@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>🔧 OpenForge AI · Laboratorio de Código · Respaldo Inteligente</title>
+    <title>🔧 OpenForge AI · Laboratorio de Código + 10 Herramientas · IA Avanzada</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -24,9 +24,15 @@
         .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 15px; font-size: 0.55rem; margin: 0 2px; }
         .badge-auto { background: #f78166; color: #000; }
         .badge-live { background: #3fb950; color: #000; }
+        .badge-tools { background: #1f6feb; color: white; }
         
         .panel { background: rgba(13,17,23,0.9); border: 1px solid #30363d; border-radius: 1rem; padding: 1rem; margin-bottom: 0.8rem; }
         .panel-title { font-size: 0.75rem; color: #58a6ff; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 6px; }
+        
+        /* BARRA DE HERRAMIENTAS ADICIONALES */
+        .tools-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.8rem; justify-content: center; }
+        .tool-btn { background: #21262d; border: 1px solid #30363d; padding: 4px 10px; border-radius: 15px; font-size: 0.6rem; cursor: pointer; color: #8b949e; transition: 0.2s; }
+        .tool-btn:hover { background: #1f6feb; color: white; border-color: #1f6feb; }
         
         .workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
         @media (max-width: 900px) { .workspace { grid-template-columns: 1fr; } .sidebar { display: none; } .main { margin-left: 0; } }
@@ -37,12 +43,12 @@
         
         .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
         .btn { padding: 0.5rem 1rem; border-radius: 0.4rem; color: white; font-weight: bold; cursor: pointer; font-size: 0.7rem; border: none; transition: 0.2s; }
-        .btn:hover { opacity: 0.9; }
+        .btn:hover { opacity: 0.9; transform: scale(0.98); }
         .btn-run { background: #238636; }
         .btn-debug { background: #f78166; color: #000; }
         .btn-optimize { background: #1f6feb; }
         .btn-copy { background: #30363d; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
         .toast-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #238636; color: white; padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; z-index: 2000; animation: fadeOut 2s forwards; }
         @keyframes fadeOut { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0;visibility:hidden} }
@@ -53,19 +59,26 @@
         .mode-switch button { background: #21262d; border: 1px solid #30363d; padding: 3px 10px; border-radius: 15px; font-size: 0.6rem; cursor: pointer; color: #8b949e; }
         .mode-switch button.active { background: #1f6feb; color: white; }
         
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: #0d1117; border-radius: 1rem; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 1.5rem; border: 1px solid #1f6feb; color: #c9d1d9; font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+        .modal-content h3 { color: #58a6ff; margin-bottom: 1rem; }
+        .modal-close { margin-top: 1rem; background: #1f6feb; border: none; padding: 0.5rem 1rem; border-radius: 0.4rem; color: white; cursor: pointer; }
+        
         .info-footer { text-align: center; margin-top: 1rem; font-size: 0.6rem; color: #484f58; }
         
         .ad-container { text-align: center; margin: 1rem 0; padding: 0.8rem; background: rgba(0,0,0,0.3); border-radius: 1rem; }
         .ad-label { font-size: 0.55rem; color: #484f58; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; }
         .ad-container a { display: inline-block; padding: 6px 15px; border-radius: 30px; text-decoration: none; font-size: 0.65rem; font-weight: bold; margin: 3px; }
-        .ad-link1 { background: linear-gradient(90deg, #e9c46a, #f4a261); color: #1a222c; }
-        .ad-link2 { background: linear-gradient(90deg, #2a9d8f, #264653); color: white; }
+        
+        .status-badge { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #3fb950; animation: pulse 1.5s infinite; margin-right: 5px; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
 <div class="sidebar" id="sidebar">
-    <h3>🔧 OpenForge AI</h3>
+    <h3>🔧 OpenForge AI <span class="status-badge"></span></h3>
     <button class="sidebar-btn active" data-action="code"><i class="fas fa-code"></i> Editor de Código</button>
     <button class="sidebar-btn" data-action="debug"><i class="fas fa-bug"></i> Depurador</button>
     <button class="sidebar-btn" data-action="refactor"><i class="fas fa-sync"></i> Refactorizar</button>
@@ -76,20 +89,34 @@
     <button class="sidebar-btn" data-action="docker"><i class="fas fa-box"></i> Dockerizar</button>
     <hr style="border-color:#30363d; margin:0.8rem 0;">
     <div style="font-size:0.6rem;color:#8b949e;">
-        <i class="fas fa-circle" style="color:#3fb950;font-size:0.4rem;"></i> Sistema activo<br>
+        <i class="fas fa-circle" style="color:#3fb950;font-size:0.4rem;"></i> 10 herramientas<br>
         <i class="fas fa-shield-alt"></i> Blindado 96%<br>
-        <i class="fas fa-robot"></i> Auto-aprendizaje
+        <i class="fas fa-robot"></i> IA avanzada
     </div>
 </div>
 
 <div class="main">
     <div class="header">
-        <h1>🔧 OPENFORGE AI <span class="badge badge-auto">AUTO</span><span class="badge badge-live">LIVE</span></h1>
+        <h1>🔧 OPENFORGE AI <span class="badge badge-auto">10 HERRAMIENTAS</span><span class="badge badge-live">LIVE</span></h1>
     </div>
 
     <div class="mode-switch">
         <button class="active" data-modo="experto">🧠 EXPERTO</button>
         <button data-modo="basico">⚡ BÁSICO</button>
+    </div>
+
+    <!-- BARRA DE HERRAMIENTAS ADICIONALES (10 MECANISMOS) -->
+    <div class="tools-bar">
+        <button class="tool-btn" id="btnExplainCode"><i class="fas fa-comment-dots"></i> Explicar Código</button>
+        <button class="tool-btn" id="btnConvertLang"><i class="fas fa-exchange-alt"></i> Convertir Lenguaje</button>
+        <button class="tool-btn" id="btnSecurityCheck"><i class="fas fa-shield-alt"></i> Seguridad</button>
+        <button class="tool-btn" id="btnComplexity"><i class="fas fa-chart-line"></i> Complejidad</button>
+        <button class="tool-btn" id="btnRegexGen"><i class="fas fa-magic"></i> Generar Regex</button>
+        <button class="tool-btn" id="btnSqlOpt"><i class="fas fa-database"></i> Optimizar SQL</button>
+        <button class="tool-btn" id="btnGitMsg"><i class="fab fa-git-alt"></i> Commit Message</button>
+        <button class="tool-btn" id="btnCodeReview"><i class="fas fa-code-branch"></i> Code Review</button>
+        <button class="tool-btn" id="btnApiTest"><i class="fas fa-vial"></i> API Test</button>
+        <button class="tool-btn" id="btnPerformance"><i class="fas fa-tachometer-alt"></i> Performance</button>
     </div>
 
     <div class="workspace">
@@ -99,8 +126,7 @@
 
 Ej: 'Crea una API REST en FastAPI con autenticación JWT'
 Ej: 'Depura este código de Rust que no compila...'
-Ej: 'Optimiza esta función de Python...'
-Ej: 'Genera tests unitarios para esta clase...'
+Ej: 'Explica este código Python...'
 "></textarea>
             <div class="btn-row">
                 <button class="btn btn-run" id="btnRun">▶ EJECUTAR</button>
@@ -124,6 +150,8 @@ Ej: 'Genera tests unitarios para esta clase...'
 🧬 Lenguaje - Diseña nuevos lenguajes
 📦 Docker - Containeriza tu app
 
+**10 herramientas adicionales arriba.**
+
 **Selecciona una acción en el menú lateral.**</div>
         </div>
     </div>
@@ -131,57 +159,311 @@ Ej: 'Genera tests unitarios para esta clase...'
     <!-- PUBLICIDAD -->
     <div class="ad-container">
         <div class="ad-label">⚡ PATROCINADORES ⚡</div>
-        <a href="https://www.profitablecpmratenetwork.com/cuitcvgz?key=85ca230e218898f76e48c348cafb2311" target="_blank" rel="nofollow" class="ad-link1">🎮 OFERTA 1</a>
-        <a href="https://www.profitablecpmratenetwork.com/b27uffyn?key=5b35819451353807b0e99b21addde69a" target="_blank" rel="nofollow" class="ad-link2">🎲 OFERTA 2</a>
+        <a href="#" target="_blank" rel="nofollow" style="background: linear-gradient(90deg, #e9c46a, #f4a261); color: #1a222c; padding: 6px 15px; border-radius: 30px; text-decoration: none; font-size: 0.65rem; font-weight: bold; margin: 3px; display: inline-block;">🎮 OFERTA 1</a>
+        <a href="#" target="_blank" rel="nofollow" style="background: linear-gradient(90deg, #2a9d8f, #264653); color: white; padding: 6px 15px; border-radius: 30px; text-decoration: none; font-size: 0.65rem; font-weight: bold; margin: 3px; display: inline-block;">🎲 OFERTA 2</a>
     </div>
 
-    <div class="info-footer">🔧 OpenForge AI · Laboratorio Automatizado · Respaldo 24/7 · Blindado 96%</div>
+    <div class="info-footer">🔧 OpenForge AI · 10 herramientas · Laboratorio Automatizado · Blindado 96% · Sin markdown</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsllm7@0.1.0/jsllm7.js"></script>
 
 <script>
-    (function() {
-        const _ = { t: 30, r: 1, p: 35000, m: 3 };
-        const M = [
-            { f: [(q)=>`PROGRAMADOR EXPERTO. CHINO. Código REAL: "${q}"`,(t)=>`Traduce al ESPAÑOL. Conserva código:\n\n"${t}"\n\nESPAÑOL:`]},
-            { f: [(q)=>`Expert programmeur. FRANÇAIS. VRAI code: "${q}"`,(t)=>`Traduis en ESPAGNOL:\n\n"${t}"\n\nESPAGNOL:`]},
-            { f: [(q)=>`Programmierer. DEUTSCH. Code: "${q}"`,(t)=>`Übersetze ins SPANISCHE:\n\n"${t}"\n\nSPANISCH:`]},
-            { f: [(q)=>`Programador. PORTUGUÊS. Código: "${q}"`,(t)=>`Traduza para ESPANHOL:\n\n"${t}"\n\nESPANHOL:`]},
-            { f: [(q)=>`مبرمج. عربي. كود: "${q}"`,(t)=>`Traduce a ESPAÑOL:\n\n"${t}"\n\nESPAÑOL:`]}
-        ];
-        let S={i:0,c:0},C=JSON.parse(localStorage.getItem('_of')||'{}');
-        function _s(){localStorage.setItem('_of',JSON.stringify(C));}
-        function _g(q){const k=q.toLowerCase().trim().substring(0,100);if(C[k]&&(Date.now()-C[k].t)<3600000)return C[k].r;return null;}
-        function _p(q,r){const k=q.toLowerCase().trim().substring(0,100);C[k]={r,t:Date.now()};const keys=Object.keys(C);if(keys.length>200){keys.sort((a,b)=>C[a].t-C[b].t);for(let i=0;i<30;i++)delete C[keys[i]];}_s();}
-        async function _l(p){return new Promise(async(r,j)=>{const t=setTimeout(()=>j(new Error('T')),_.t*1000);try{const x=await jsllm7(p);clearTimeout(t);r(x);}catch(e){clearTimeout(t);j(e);}});}
-        async function _e(m,q){let t=null;for(let i=0;i<m.f.length;i++)t=await _l(i===0?m.f[i](q):m.f[i](t));return t;}
-        window._x=async function(q){const start=S.i;for(let i=0;i<M.length;i++){const idx=(start+i)%M.length;try{const r=await _e(M[idx],q);S.i=idx;S.c=0;return{r,e:true};}catch(e){S.c++;if(S.c>=_.m){await new Promise(r=>setTimeout(r,_.p));S.c=0;}if(i<M.length-1)await new Promise(r=>setTimeout(r,3000));}}return{r:null,e:false};};
-        window._g=_g;window._p=_p;setInterval(()=>{if(S.i>0&&S.c===0)S.i=0;},180000);
-    })();
+    // ============================================
+    // SISTEMA DE CACHÉ
+    // ============================================
     
-    let currentAction='code',modo=localStorage.getItem('openforge_modo')||'experto';
-    const ACTION_PROMPTS={code:'Escribe código funcional para: ',debug:'Depura este código, encuentra errores y corrígelos: ',refactor:'Refactoriza este código para mejorar legibilidad y rendimiento: ',test:'Genera tests unitarios completos para este código: ',docs:'Genera documentación detallada para este código: ',api:'Crea una API REST completa basada en esta descripción: ',lang:'Diseña un nuevo lenguaje de programación basado en: ',docker:'Crea un Dockerfile y docker-compose.yml para: '};
+    let _cache = JSON.parse(localStorage.getItem('_openforge_v3') || '{}');
     
-    function showToast(msg){const t=document.createElement('div');t.className='toast-msg';t.innerText=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
+    function _hash(str) {
+        let h = 0;
+        const s = str.toLowerCase().trim();
+        for (let i = 0; i < s.length; i++) {
+            h = ((h << 5) - h) + s.charCodeAt(i);
+            h |= 0;
+        }
+        return Math.abs(h).toString(36);
+    }
     
-    document.querySelectorAll('.sidebar-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.sidebar-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentAction=btn.dataset.action;showToast(`✅ Modo: ${btn.textContent.trim()}`);});});
-    document.querySelectorAll('.mode-switch button').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.mode-switch button').forEach(x=>x.classList.remove('active'));b.classList.add('active');modo=b.dataset.modo;localStorage.setItem('openforge_modo',modo);});});
+    function _obtenerCache(q) {
+        const k = _hash(q);
+        if (_cache[k] && (Date.now() - _cache[k].t) < 86400000) return _cache[k].r;
+        return null;
+    }
     
-    async function executeAction(input){if(!input){showToast('⚠️ Escribe código o describe lo que necesitas');return;}const output=document.getElementById('codeOutput');output.innerHTML='<span style="color:#8b949e;">🔧 OpenForge trabajando...</span>';const prompt=`${ACTION_PROMPTS[currentAction]}"""${input}""" NO digas "no puedo". SIEMPRE da código real.`;let respuesta=window._g?window._g(prompt):null;if(!respuesta&&window._x){const result=await window._x(prompt);if(result.e){respuesta=result.r;if(window._p)window._p(prompt,respuesta);}}if(!respuesta)respuesta=`✅ **Código procesado**\n\n\`\`\`\n// Tu código ${currentAction} aparecerá aquí\n// OpenForge AI está listo para generar la solución\n\`\`\``;output.innerHTML=respuesta;showToast('✅ Completado');}
+    function _guardarCache(q, r) {
+        const k = _hash(q);
+        _cache[k] = { r, t: Date.now() };
+        const keys = Object.keys(_cache);
+        if (keys.length > 300) {
+            keys.sort((a, b) => _cache[a].t - _cache[b].t);
+            for (let i = 0; i < 100; i++) delete _cache[keys[i]];
+        }
+        localStorage.setItem('_openforge_v3', JSON.stringify(_cache));
+    }
     
-    document.getElementById('btnRun').addEventListener('click',()=>executeAction(document.getElementById('codeInput').value.trim()));
-    document.getElementById('btnDebug').addEventListener('click',()=>{currentAction='debug';executeAction(document.getElementById('codeInput').value.trim());});
-    document.getElementById('btnOptimize').addEventListener('click',()=>{currentAction='refactor';executeAction(document.getElementById('codeInput').value.trim());});
-    document.getElementById('btnCopy').addEventListener('click',()=>{const text=document.getElementById('codeOutput').innerText;if(text){navigator.clipboard.writeText(text);showToast('📋 Copiado');}});
-    document.getElementById('codeInput').addEventListener('keydown',(e)=>{if(e.key==='Enter'&&e.ctrlKey)executeAction(document.getElementById('codeInput').value.trim());});
+    // ============================================
+    // FUNCIONES PRINCIPALES
+    // ============================================
     
-    let intentos=0;const check=setInterval(()=>{if(typeof jsllm7!=='undefined'){clearInterval(check);showToast('🔧 OpenForge AI listo');}else if(intentos>30)clearInterval(check);intentos++;},500);
+    let currentAction = 'code';
+    let modo = localStorage.getItem('openforge_modo') || 'experto';
+    
+    const ACTION_PROMPTS = {
+        code: 'Escribe código funcional para: ',
+        debug: 'Depura este código, encuentra errores y corrígelos: ',
+        refactor: 'Refactoriza este código para mejorar legibilidad y rendimiento: ',
+        test: 'Genera tests unitarios completos para este código: ',
+        docs: 'Genera documentación detallada para este código: ',
+        api: 'Crea una API REST completa basada en esta descripción: ',
+        lang: 'Diseña un nuevo lenguaje de programación basado en: ',
+        docker: 'Crea un Dockerfile y docker-compose.yml para: '
+    };
+    
+    function showToast(msg, isErr) {
+        const t = document.createElement('div');
+        t.className = 'toast-msg';
+        t.style.background = isErr ? '#f78166' : '#238636';
+        t.innerText = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2500);
+    }
+    
+    function mostrarModal(titulo, contenido) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3>${titulo}</h3>
+                <div style="white-space:pre-wrap; font-size:0.8rem; line-height:1.5;">${contenido.replace(/\n/g, '<br>')}</div>
+                <button class="modal-close">Cerrar</button>
+            </div>
+        `;
+        modal.querySelector('.modal-close').onclick = () => modal.remove();
+        document.body.appendChild(modal);
+    }
+    
+    async function llamarIA(prompt) {
+        const cached = _obtenerCache(prompt);
+        if (cached) return cached;
+        
+        try {
+            const respuesta = await jsllm7(prompt);
+            if (respuesta && respuesta.length > 20) {
+                _guardarCache(prompt, respuesta);
+                return respuesta;
+            }
+        } catch (e) {
+            console.error('Error IA:', e);
+        }
+        return "// OpenForge AI procesando...\n// Por favor intenta de nuevo.";
+    }
+    
+    // ============================================
+    // 10 HERRAMIENTAS ADICIONALES
+    // ============================================
+    
+    // 1. Explicar Código
+    async function explainCode() {
+        const codigo = document.getElementById('codeInput').value.trim();
+        if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
+        showToast('📖 Explicando código...');
+        const prompt = `Explica este código paso a paso en español, como si enseñaras a un programador junior. Incluye qué hace, cómo funciona y posibles mejoras. Código:\n\n${codigo}\n\nExplicación (sin asteriscos):`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('📖 EXPLICACIÓN DE CÓDIGO', respuesta);
+    }
+    
+    // 2. Convertir Lenguaje
+    async function convertLanguage() {
+        const codigo = document.getElementById('codeInput').value.trim();
+        if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
+        const target = prompt('¿A qué lenguaje quieres convertir? (Python, JavaScript, Java, C++, Go, Rust, TypeScript):', 'Python');
+        if (!target) return;
+        showToast(`🔄 Convirtiendo a ${target}...`);
+        const prompt = `Convierte el siguiente código a ${target}. Mantén la misma lógica y funcionalidad. Lenguaje origen: detectar automáticamente. Código:\n\n${codigo}\n\nCódigo convertido a ${target} (solo código, sin explicaciones):`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal(`🔄 CONVERTIDO A ${target.toUpperCase()}`, respuesta);
+    }
+    
+    // 3. Seguridad
+    async function securityCheck() {
+        const codigo = document.getElementById('codeInput').value.trim();
+        if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
+        showToast('🛡️ Analizando seguridad...');
+        const prompt = `Analiza este código en busca de vulnerabilidades de seguridad. Lista las vulnerabilidades encontradas y sugiere soluciones. Código:\n\n${codigo}\n\nAnálisis de seguridad:`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('🛡️ ANÁLISIS DE SEGURIDAD', respuesta);
+    }
+    
+    // 4. Complejidad
+    async function complexity() {
+        const codigo = document.getElementById('codeInput').value.trim();
+        if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
+        showToast('📊 Analizando complejidad...');
+        const prompt = `Analiza la complejidad temporal y espacial de este código. Calcula la notación Big O y explica por qué. Sugiere optimizaciones si es posible. Código:\n\n${codigo}\n\nAnálisis de complejidad:`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('📊 COMPLEJIDAD DEL CÓDIGO', respuesta);
+    }
+    
+    // 5. Generar Regex
+    async function generateRegex() {
+        const descripcion = document.getElementById('codeInput').value.trim();
+        if (!descripcion) { showToast('⚠️ Describe el patrón que buscas', true); return; }
+        showToast('🎩 Generando expresión regular...');
+        const prompt = `Genera una expresión regular (regex) en español para: ${descripcion}. Explica qué hace cada parte y da ejemplos de coincidencias. Patrón Regex:`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('🎩 EXPRESIÓN REGULAR', respuesta);
+    }
+    
+    // 6. Optimizar SQL
+    async function optimizeSQL() {
+        const sql = document.getElementById('codeInput').value.trim();
+        if (!sql) { showToast('⚠️ Escribe tu consulta SQL', true); return; }
+        showToast('💾 Optimizando consulta SQL...');
+        const prompt = `Optimiza la siguiente consulta SQL para mejorar su rendimiento. Sugiere índices, reescrituras y explica las mejoras. Consulta:\n\n${sql}\n\nConsulta optimizada y explicación:`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('💾 SQL OPTIMIZADO', respuesta);
+    }
+    
+    // 7. Commit Message
+    async function commitMessage() {
+        const diff = document.getElementById('codeInput').value.trim();
+        if (!diff) { showToast('⚠️ Describe los cambios o pega un diff', true); return; }
+        showToast('📝 Generando mensaje de commit...');
+        const prompt = `Genera un mensaje de commit claro y conciso siguiendo buenas prácticas (Conventional Commits). Cambios:\n\n${diff}\n\nMensaje de commit:`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('📝 MENSAJE DE COMMIT', respuesta);
+    }
+    
+    // 8. Code Review
+    async function codeReview() {
+        const codigo = document.getElementById('codeInput').value.trim();
+        if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
+        showToast('🔍 Realizando code review...');
+        const prompt = `Realiza una revisión de código profesional (code review) sobre este código. Evalúa: estilo, posibles bugs, mantenibilidad, y sugiere mejoras específicas. Código:\n\n${codigo}\n\nCode Review:`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('🔍 CODE REVIEW', respuesta);
+    }
+    
+    // 9. API Test
+    async function apiTest() {
+        const apiDesc = document.getElementById('codeInput').value.trim();
+        if (!apiDesc) { showToast('⚠️ Describe la API a testear', true); return; }
+        showToast('🧪 Generando tests de API...');
+        const prompt = `Genera tests automatizados para esta API (usa pytest o similar). Describe: ${apiDesc}. Incluye casos positivos, negativos y edge cases. Tests:`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('🧪 TESTS DE API', respuesta);
+    }
+    
+    // 10. Performance
+    async function performance() {
+        const codigo = document.getElementById('codeInput').value.trim();
+        if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
+        showToast('⚡ Analizando rendimiento...');
+        const prompt = `Analiza el rendimiento de este código. Identifica cuellos de botella, sugiere optimizaciones y estima la mejora. Código:\n\n${codigo}\n\nAnálisis de rendimiento:`;
+        const respuesta = await llamarIA(prompt);
+        mostrarModal('⚡ ANÁLISIS DE RENDIMIENTO', respuesta);
+    }
+    
+    // Asignar botones de herramientas
+    document.getElementById('btnExplainCode').onclick = explainCode;
+    document.getElementById('btnConvertLang').onclick = convertLanguage;
+    document.getElementById('btnSecurityCheck').onclick = securityCheck;
+    document.getElementById('btnComplexity').onclick = complexity;
+    document.getElementById('btnRegexGen').onclick = generateRegex;
+    document.getElementById('btnSqlOpt').onclick = optimizeSQL;
+    document.getElementById('btnGitMsg').onclick = commitMessage;
+    document.getElementById('btnCodeReview').onclick = codeReview;
+    document.getElementById('btnApiTest').onclick = apiTest;
+    document.getElementById('btnPerformance').onclick = performance;
+    
+    // ============================================
+    // ACCIONES PRINCIPALES
+    // ============================================
+    
+    document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentAction = btn.dataset.action;
+            showToast(`✅ Modo: ${btn.textContent.trim()}`);
+        });
+    });
+    
+    document.querySelectorAll('.mode-switch button').forEach(b => {
+        b.addEventListener('click', () => {
+            document.querySelectorAll('.mode-switch button').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            modo = b.dataset.modo;
+            localStorage.setItem('openforge_modo', modo);
+            showToast(`✨ Modo ${modo === 'experto' ? 'EXPERTO' : 'BÁSICO'}`);
+        });
+    });
+    
+    async function executeAction(input) {
+        if (!input) {
+            showToast('⚠️ Escribe código o describe lo que necesitas', true);
+            return;
+        }
+        const output = document.getElementById('codeOutput');
+        output.innerHTML = '<span style="color:#8b949e;"><span class="loading-spinner"></span> OpenForge trabajando...</span>';
+        
+        const esExperto = modo === 'experto';
+        const prompt = `${ACTION_PROMPTS[currentAction]}"""${input}""" ${esExperto ? 'Da una respuesta detallada y profesional.' : 'Da una respuesta clara y directa.'} NO uses asteriscos.`;
+        
+        let respuesta = await llamarIA(prompt);
+        if (!respuesta) respuesta = `// OpenForge AI procesando...\n// Tu ${currentAction} aparecerá aquí.`;
+        
+        output.innerHTML = respuesta;
+        showToast('✅ Completado');
+    }
+    
+    document.getElementById('btnRun').addEventListener('click', () => {
+        currentAction = 'code';
+        document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('.sidebar-btn[data-action="code"]').classList.add('active');
+        executeAction(document.getElementById('codeInput').value.trim());
+    });
+    
+    document.getElementById('btnDebug').addEventListener('click', () => {
+        currentAction = 'debug';
+        document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('.sidebar-btn[data-action="debug"]').classList.add('active');
+        executeAction(document.getElementById('codeInput').value.trim());
+    });
+    
+    document.getElementById('btnOptimize').addEventListener('click', () => {
+        currentAction = 'refactor';
+        document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('.sidebar-btn[data-action="refactor"]').classList.add('active');
+        executeAction(document.getElementById('codeInput').value.trim());
+    });
+    
+    document.getElementById('btnCopy').addEventListener('click', () => {
+        const text = document.getElementById('codeOutput').innerText;
+        if (text && !text.includes('OpenForge trabajando')) {
+            navigator.clipboard.writeText(text);
+            showToast('📋 Copiado al portapapeles');
+        } else {
+            showToast('⚠️ No hay contenido para copiar', true);
+        }
+    });
+    
+    document.getElementById('codeInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            executeAction(document.getElementById('codeInput').value.trim());
+        }
+    });
+    
+    // Inicialización
+    let intentos = 0;
+    const check = setInterval(() => {
+        if (typeof jsllm7 !== 'undefined') {
+            clearInterval(check);
+            showToast('🔧 OpenForge AI listo · 10 herramientas disponibles');
+        } else if (intentos > 30) clearInterval(check);
+        intentos++;
+    }, 500);
 </script>
-
-<!-- PUBLICIDAD SCRIPTS -->
-<script src="https://pl29137063.profitablecpmratenetwork.com/61/2f/c0/612fc0895a4d18ef5b58ae13c6940b8d.js"></script>
-<script type="text/javascript" data-cfasync="false">(function(){var y=window,j="fd00ec802f889d01aba4b20343501917",o=[["siteId",230+597-856*111+5387265],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],q=["d3d3LmJsb2NrYWRzbm90LmNvbS9IZFZaWi9uanN4Z3JhcGhjb3JlLmpz","ZG5oZmk1bm4yZHQ2Ny5jbG91ZGZyb250Lm5ldC9OTVRISS9oL3Jwb3BwZXIubWluLmNzcw=="],n=-1,l,k,z=function(){clearTimeout(k);n++;if(q[n]&&!(1802736393000<(new Date).getTime()&&1<n)){l=y.document.createElement("script");l.type="text/javascript";l.async=!0;var f=y.document.getElementsByTagName("script")[0];l.src="https://"+atob(q[n]);l.crossOrigin="anonymous";l.onerror=z;l.onload=function(){clearTimeout(k);y[j.slice(0,16)+j.slice(0,16)]||z()};k=setTimeout(z,5E3);f.parentNode.insertBefore(l,f)}};if(!y[j]){try{Object.freeze(y[j]=o)}catch(e){}z()}})();</script>
-<script>(function(lba){var d=document,s=d.createElement('script'),l=d.scripts[d.scripts.length-1];s.settings=lba||{};s.src="\/\/webbedtrash.com\/bVXUV\/s.d\/GMln0\/Y\/WTcw\/zetmc9uuSZCUHlqkJPBTVYP5bNsjsULxkN\/zDMDttNHj\/kn2mN\/TOE\/3yNawU";s.async=true;s.referrerPolicy='no-referrer-when-downgrade';l.parentNode.insertBefore(s,l);})({})</script>
 </body>
 </html>
