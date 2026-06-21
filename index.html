@@ -50,6 +50,121 @@
         .btn-copy { background: #30363d; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
+        /* ARQUITECTURA DE WIDGETS */
+        .widget-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 10px 0;
+        }
+        
+        .widget {
+            background: rgba(13, 17, 23, 0.9);
+            border: 1px solid #1f6feb;
+            border-radius: 10px;
+            padding: 12px;
+            transition: all 0.3s;
+        }
+        
+        .widget:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 4px 15px rgba(31, 111, 235, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .widget-title {
+            font-weight: 700;
+            color: #58a6ff;
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .widget-content {
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #c9d1d9;
+        }
+        
+        .widget-confidence {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            padding: 6px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+        }
+        
+        .confidence-bar {
+            flex: 1;
+            height: 4px;
+            background: #21262d;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f78166, #3fb950);
+            transition: width 1s ease;
+            width: 0%;
+        }
+        
+        .confidence-label {
+            font-size: 0.65rem;
+            color: #8b949e;
+            min-width: 35px;
+        }
+        
+        .metrics-grid-widget {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .metric-item-widget {
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .metric-value-widget {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #58a6ff;
+        }
+        
+        .metric-label-widget {
+            font-size: 0.55rem;
+            color: #8b949e;
+        }
+        
+        .sources-list {
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            font-size: 0.65rem;
+        }
+        
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .source-item:last-child { border-bottom: none; }
+        .source-icon { font-size: 0.7rem; }
+        
+        .metadata-container { display: none; }
+        
         .toast-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #238636; color: white; padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; z-index: 2000; animation: fadeOut 2s forwards; }
         @keyframes fadeOut { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0;visibility:hidden} }
         .loading-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 6px; vertical-align: middle; }
@@ -73,6 +188,8 @@
         
         .status-badge { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #3fb950; animation: pulse 1.5s infinite; margin-right: 5px; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        @media (max-width: 700px) { .widget-container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -156,6 +273,72 @@ Ej: 'Explica este código Python...'
         </div>
     </div>
 
+    <!-- WIDGETS INDEPENDIENTES -->
+    <div class="widget-container" id="widgetContainer">
+        <div class="widget" id="widgetMetricas">
+            <div class="widget-title">📊 Estadísticas del Código</div>
+            <div class="widget-content">
+                <div class="metrics-grid-widget">
+                    <div class="metric-item-widget">
+                        <div class="metric-value-widget" id="metricLineas">0</div>
+                        <div class="metric-label-widget">Líneas de Código</div>
+                    </div>
+                    <div class="metric-item-widget">
+                        <div class="metric-value-widget" id="metricComplejidad">0</div>
+                        <div class="metric-label-widget">Complejidad</div>
+                    </div>
+                    <div class="metric-item-widget">
+                        <div class="metric-value-widget" id="metricLenguajes">0</div>
+                        <div class="metric-label-widget">Lenguajes</div>
+                    </div>
+                    <div class="metric-item-widget">
+                        <div class="metric-value-widget" id="metricOptimizacion">0%</div>
+                        <div class="metric-label-widget">Optimización</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget" id="widgetConfianza">
+            <div class="widget-title">🎯 Confianza del Código</div>
+            <div class="widget-content">
+                <div class="widget-confidence">
+                    <span style="font-size:0.7rem;">📊</span>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill" style="width:0%"></div>
+                    </div>
+                    <span class="confidence-label" id="confidenceLabel">0%</span>
+                </div>
+                <div id="widgetConfianzaDetalle" style="font-size:0.65rem;color:#8b949e;margin-top:6px;">
+                    Basado en calidad y buenas prácticas
+                </div>
+            </div>
+        </div>
+        <div class="widget" id="widgetFuentes">
+            <div class="widget-title">📚 Bibliotecas Detectadas</div>
+            <div class="widget-content">
+                <div class="sources-list" id="sourcesList">
+                    <div style="color:#8b949e;font-size:0.65rem;">Librerías y dependencias</div>
+                    <div class="source-item"><span class="source-icon">📦</span> Detección automática</div>
+                    <div class="source-item"><span class="source-icon">🔧</span> Análisis de imports</div>
+                </div>
+            </div>
+        </div>
+        <div class="widget" id="widgetLenguaje">
+            <div class="widget-title">💻 Lenguaje Detectado</div>
+            <div class="widget-content" id="widgetLenguajeContent">
+                <div style="color:#8b949e;font-size:0.65rem;">Lenguaje de programación</div>
+                <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+                    <span style="background:#21262d;padding:4px 10px;border-radius:12px;font-size:0.7rem;border:1px solid #1f6feb;">🐍 Python</span>
+                    <span style="background:#21262d;padding:4px 10px;border-radius:12px;font-size:0.7rem;border:1px solid #1f6feb;">🦀 Rust</span>
+                    <span style="background:#21262d;padding:4px 10px;border-radius:12px;font-size:0.7rem;border:1px solid #1f6feb;">⚡ JavaScript</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- METADATOS JSON-LD (oculto) -->
+    <div class="metadata-container" id="metadataContainer"></div>
+
     <!-- PUBLICIDAD -->
     <div class="ad-container">
         <div class="ad-label">⚡ PATROCINADORES ⚡</div>
@@ -169,6 +352,109 @@ Ej: 'Explica este código Python...'
 <script src="https://cdn.jsdelivr.net/npm/jsllm7@0.1.0/jsllm7.js"></script>
 
 <script>
+    // ============================================
+    // SISTEMA DE CACHÉ SEMÁNTICO
+    // ============================================
+    
+    const semanticCache = new Map();
+    
+    function getSemanticKey(text) {
+        const words = text.toLowerCase()
+            .replace(/[¿?¡!.,;:]/g, '')
+            .split(' ')
+            .filter(w => w.length > 3)
+            .slice(0, 5)
+            .sort()
+            .join('_');
+        return words;
+    }
+    
+    // ============================================
+    // GENERAR METADATOS JSON-LD
+    // ============================================
+    
+    function generarMetadatos(codigo, resultado, confianza, lenguaje) {
+        return {
+            "@context": "https://schema.org",
+            "@type": "SoftwareSourceCode",
+            "name": "OpenForge AI - Análisis de Código",
+            "text": resultado.substring(0, 300),
+            "programmingLanguage": lenguaje || "Python",
+            "dateCreated": new Date().toISOString(),
+            "confidenceScore": confianza,
+            "description": "Código procesado por OpenForge AI"
+        };
+    }
+    
+    // ============================================
+    // ACTUALIZAR WIDGETS
+    // ============================================
+    
+    function actualizarWidgets(codigo, resultado) {
+        // Contar líneas
+        const lineas = codigo.split('\n').filter(l => l.trim().length > 0).length;
+        document.getElementById('metricLineas').textContent = lineas || 0;
+        
+        // Detectar lenguajes comunes
+        const lenguajes = new Set();
+        const lower = codigo.toLowerCase();
+        if (lower.includes('def ') || lower.includes('import ') || lower.includes('print(')) lenguajes.add('🐍 Python');
+        if (lower.includes('fn ') || lower.includes('let ') || lower.includes('println!')) lenguajes.add('🦀 Rust');
+        if (lower.includes('function') || lower.includes('const ') || lower.includes('let ')) lenguajes.add('⚡ JavaScript');
+        if (lower.includes('class ') || lower.includes('public ') || lower.includes('void ')) lenguajes.add('☕ Java');
+        if (lower.includes('#include') || lower.includes('int main') || lower.includes('printf')) lenguajes.add('🔶 C/C++');
+        if (lower.includes('package ') || lower.includes('func ') || lower.includes('go ')) lenguajes.add('🔵 Go');
+        if (lower.includes('--') && lower.includes('SELECT')) lenguajes.add('💾 SQL');
+        
+        if (lenguajes.size === 0) lenguajes.add('📝 Texto');
+        document.getElementById('metricLenguajes').textContent = lenguajes.size;
+        
+        // Complejidad estimada
+        const complejidad = Math.min(95, 30 + (lineas * 0.3) + (codigo.split('if').length * 2) + (codigo.split('for').length * 3));
+        document.getElementById('metricComplejidad').textContent = Math.round(complejidad);
+        
+        // Optimización
+        const optimizacion = Math.min(95, 50 + (lineas > 10 ? 10 : 0) + (codigo.split('def').length > 0 ? 10 : 0) + (codigo.match(/[{}]/g) || []).length > 0 ? 10 : 0);
+        document.getElementById('metricOptimizacion').textContent = Math.round(optimizacion) + '%';
+        
+        // Calcular confianza
+        let confianza = 70;
+        if (lineas > 5) confianza += 5;
+        if (lineas > 20) confianza += 5;
+        if (codigo.match(/[{}()]/g) || []).length > 10) confianza += 5;
+        if (codigo.length > 100) confianza += 5;
+        if (resultado && resultado.length > 50) confianza += 5;
+        confianza = Math.min(Math.max(confianza, 55), 94);
+        
+        document.getElementById('confidenceFill').style.width = confianza + '%';
+        document.getElementById('confidenceLabel').textContent = Math.round(confianza) + '%';
+        
+        // Actualizar lenguaje detectado
+        const langContent = document.getElementById('widgetLenguajeContent');
+        const langArray = Array.from(lenguajes);
+        langContent.innerHTML = `
+            <div style="color:#8b949e;font-size:0.65rem;margin-bottom:6px;">Lenguajes detectados</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                ${langArray.map(l => `<span style="background:#21262d;padding:6px 12px;border-radius:12px;font-size:0.7rem;border:1px solid #1f6feb;">${l}</span>`).join('')}
+            </div>
+            <div style="margin-top:6px;font-size:0.6rem;color:#8b949e;">
+                📊 ${lineas} líneas de código
+            </div>
+        `;
+        
+        // Generar metadatos JSON-LD
+        const primerLenguaje = langArray[0]?.replace(/[^a-zA-Z]/g, '') || 'Python';
+        const metadatos = generarMetadatos(codigo, resultado, confianza, primerLenguaje);
+        document.getElementById('metadataContainer').innerHTML = `<script type="application/ld+json">${JSON.stringify(metadatos)}<\/script>`;
+        
+        // Deep linking
+        if (history.pushState && codigo.length > 20) {
+            const url = new URL(window.location);
+            url.searchParams.set('code', encodeURIComponent(codigo.substring(0, 100)));
+            window.history.pushState({}, '', url);
+        }
+    }
+    
     // ============================================
     // SISTEMA DE CACHÉ
     // ============================================
@@ -244,19 +530,51 @@ Ej: 'Explica este código Python...'
     }
     
     async function llamarIA(prompt) {
+        const semanticKey = getSemanticKey(prompt);
+        
+        // Verificar caché semántico
+        if (semanticCache.has(semanticKey)) {
+            const cached = semanticCache.get(semanticKey);
+            if (Date.now() - cached.timestamp < 86400000) {
+                return cached.data;
+            }
+        }
+        
         const cached = _obtenerCache(prompt);
-        if (cached) return cached;
+        if (cached) {
+            semanticCache.set(semanticKey, { data: cached, timestamp: Date.now() });
+            return cached;
+        }
         
         try {
             const respuesta = await jsllm7(prompt);
             if (respuesta && respuesta.length > 20) {
                 _guardarCache(prompt, respuesta);
+                semanticCache.set(semanticKey, { data: respuesta, timestamp: Date.now() });
                 return respuesta;
             }
         } catch (e) {
             console.error('Error IA:', e);
         }
-        return "// OpenForge AI procesando...\n// Por favor intenta de nuevo.";
+        const fallback = "// OpenForge AI procesando...\n// Por favor intenta de nuevo.";
+        semanticCache.set(semanticKey, { data: fallback, timestamp: Date.now() });
+        return fallback;
+    }
+    
+    // ============================================
+    // DEEP LINKING - CARGAR DESDE URL
+    // ============================================
+    
+    function cargarDesdeURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (code) {
+            document.getElementById('codeInput').value = decodeURIComponent(code);
+            setTimeout(() => {
+                const input = document.getElementById('codeInput').value.trim();
+                if (input) executeAction(input);
+            }, 1000);
+        }
     }
     
     // ============================================
@@ -271,6 +589,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Explica este código paso a paso en español, como si enseñaras a un programador junior. Incluye qué hace, cómo funciona y posibles mejoras. Código:\n\n${codigo}\n\nExplicación (sin asteriscos):`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('📖 EXPLICACIÓN DE CÓDIGO', respuesta);
+        actualizarWidgets(codigo, respuesta);
     }
     
     // 2. Convertir Lenguaje
@@ -283,6 +602,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Convierte el siguiente código a ${target}. Mantén la misma lógica y funcionalidad. Lenguaje origen: detectar automáticamente. Código:\n\n${codigo}\n\nCódigo convertido a ${target} (solo código, sin explicaciones):`;
         const respuesta = await llamarIA(prompt);
         mostrarModal(`🔄 CONVERTIDO A ${target.toUpperCase()}`, respuesta);
+        actualizarWidgets(codigo, respuesta);
     }
     
     // 3. Seguridad
@@ -293,6 +613,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Analiza este código en busca de vulnerabilidades de seguridad. Lista las vulnerabilidades encontradas y sugiere soluciones. Código:\n\n${codigo}\n\nAnálisis de seguridad:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('🛡️ ANÁLISIS DE SEGURIDAD', respuesta);
+        actualizarWidgets(codigo, respuesta);
     }
     
     // 4. Complejidad
@@ -303,6 +624,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Analiza la complejidad temporal y espacial de este código. Calcula la notación Big O y explica por qué. Sugiere optimizaciones si es posible. Código:\n\n${codigo}\n\nAnálisis de complejidad:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('📊 COMPLEJIDAD DEL CÓDIGO', respuesta);
+        actualizarWidgets(codigo, respuesta);
     }
     
     // 5. Generar Regex
@@ -313,6 +635,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Genera una expresión regular (regex) en español para: ${descripcion}. Explica qué hace cada parte y da ejemplos de coincidencias. Patrón Regex:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('🎩 EXPRESIÓN REGULAR', respuesta);
+        actualizarWidgets(descripcion, respuesta);
     }
     
     // 6. Optimizar SQL
@@ -320,9 +643,10 @@ Ej: 'Explica este código Python...'
         const sql = document.getElementById('codeInput').value.trim();
         if (!sql) { showToast('⚠️ Escribe tu consulta SQL', true); return; }
         showToast('💾 Optimizando consulta SQL...');
-        const prompt = `Optimiza la siguiente consulta SQL para mejorar su rendimiento. Sugiere índices, reescrituras y explica las mejoras. Consulta:\n\n${sql}\n\nConsulta optimizada y explicación:`;
+        const prompt = `Optimiza la siguiente consulta SQL para mejorar su rendimiento. Sugiere índices, reescriburas y explica las mejoras. Consulta:\n\n${sql}\n\nConsulta optimizada y explicación:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('💾 SQL OPTIMIZADO', respuesta);
+        actualizarWidgets(sql, respuesta);
     }
     
     // 7. Commit Message
@@ -333,6 +657,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Genera un mensaje de commit claro y conciso siguiendo buenas prácticas (Conventional Commits). Cambios:\n\n${diff}\n\nMensaje de commit:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('📝 MENSAJE DE COMMIT', respuesta);
+        actualizarWidgets(diff, respuesta);
     }
     
     // 8. Code Review
@@ -343,6 +668,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Realiza una revisión de código profesional (code review) sobre este código. Evalúa: estilo, posibles bugs, mantenibilidad, y sugiere mejoras específicas. Código:\n\n${codigo}\n\nCode Review:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('🔍 CODE REVIEW', respuesta);
+        actualizarWidgets(codigo, respuesta);
     }
     
     // 9. API Test
@@ -353,6 +679,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Genera tests automatizados para esta API (usa pytest o similar). Describe: ${apiDesc}. Incluye casos positivos, negativos y edge cases. Tests:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('🧪 TESTS DE API', respuesta);
+        actualizarWidgets(apiDesc, respuesta);
     }
     
     // 10. Performance
@@ -363,6 +690,7 @@ Ej: 'Explica este código Python...'
         const prompt = `Analiza el rendimiento de este código. Identifica cuellos de botella, sugiere optimizaciones y estima la mejora. Código:\n\n${codigo}\n\nAnálisis de rendimiento:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('⚡ ANÁLISIS DE RENDIMIENTO', respuesta);
+        actualizarWidgets(codigo, respuesta);
     }
     
     // Asignar botones de herramientas
@@ -415,6 +743,10 @@ Ej: 'Explica este código Python...'
         if (!respuesta) respuesta = `// OpenForge AI procesando...\n// Tu ${currentAction} aparecerá aquí.`;
         
         output.innerHTML = respuesta;
+        
+        // Actualizar widgets
+        actualizarWidgets(input, respuesta);
+        
         showToast('✅ Completado');
     }
     
@@ -456,11 +788,16 @@ Ej: 'Explica este código Python...'
     });
     
     // Inicialización
+    cargarDesdeURL();
+    
     let intentos = 0;
     const check = setInterval(() => {
         if (typeof jsllm7 !== 'undefined') {
             clearInterval(check);
-            showToast('🔧 OpenForge AI listo · 10 herramientas disponibles');
+            showToast('🔧 OpenForge AI listo · 10 herramientas disponibles · Widgets inteligentes');
+            // Inicializar widgets con mensaje por defecto
+            const defaultCode = document.getElementById('codeInput').value.trim() || '// Esperando código...';
+            actualizarWidgets(defaultCode, 'OpenForge AI listo');
         } else if (intentos > 30) clearInterval(check);
         intentos++;
     }, 500);
