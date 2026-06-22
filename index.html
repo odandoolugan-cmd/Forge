@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>🔧 OpenForge AI · Laboratorio de Código + 10 Herramientas · IA Avanzada</title>
+    <title>🔧 OpenForge AI · Laboratorio de Código + Conectores · IA Avanzada</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -29,7 +29,6 @@
         .panel { background: rgba(13,17,23,0.9); border: 1px solid #30363d; border-radius: 1rem; padding: 1rem; margin-bottom: 0.8rem; }
         .panel-title { font-size: 0.75rem; color: #58a6ff; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 6px; }
         
-        /* BARRA DE HERRAMIENTAS ADICIONALES */
         .tools-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.8rem; justify-content: center; }
         .tool-btn { background: #21262d; border: 1px solid #30363d; padding: 4px 10px; border-radius: 15px; font-size: 0.6rem; cursor: pointer; color: #8b949e; transition: 0.2s; }
         .tool-btn:hover { background: #1f6feb; color: white; border-color: #1f6feb; }
@@ -50,7 +49,6 @@
         .btn-copy { background: #30363d; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
-        /* ARQUITECTURA DE WIDGETS */
         .widget-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -144,6 +142,29 @@
             color: #8b949e;
         }
         
+        /* Métricas de conectores */
+        .connector-metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .connector-metric {
+            background: rgba(0,0,0,0.3);
+            padding: 4px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .connector-metric .value {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #58a6ff;
+        }
+        .connector-metric .label {
+            font-size: 0.5rem;
+            color: #8b949e;
+        }
+        
         .sources-list {
             margin-top: 8px;
             padding: 8px;
@@ -174,7 +195,6 @@
         .mode-switch button { background: #21262d; border: 1px solid #30363d; padding: 3px 10px; border-radius: 15px; font-size: 0.6rem; cursor: pointer; color: #8b949e; }
         .mode-switch button.active { background: #1f6feb; color: white; }
         
-        /* Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .modal-content { background: #0d1117; border-radius: 1rem; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 1.5rem; border: 1px solid #1f6feb; color: #c9d1d9; font-family: 'Fira Code', monospace; font-size: 0.8rem; }
         .modal-content h3 { color: #58a6ff; margin-bottom: 1rem; }
@@ -189,7 +209,10 @@
         .status-badge { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #3fb950; animation: pulse 1.5s infinite; margin-right: 5px; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         
-        @media (max-width: 700px) { .widget-container { grid-template-columns: 1fr; } }
+        @media (max-width: 700px) { 
+            .widget-container { grid-template-columns: 1fr; }
+            .connector-metrics { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -206,7 +229,7 @@
     <button class="sidebar-btn" data-action="docker"><i class="fas fa-box"></i> Dockerizar</button>
     <hr style="border-color:#30363d; margin:0.8rem 0;">
     <div style="font-size:0.6rem;color:#8b949e;">
-        <i class="fas fa-circle" style="color:#3fb950;font-size:0.4rem;"></i> 10 herramientas<br>
+        <i class="fas fa-circle" style="color:#3fb950;font-size:0.4rem;"></i> Conectores<br>
         <i class="fas fa-shield-alt"></i> Blindado 96%<br>
         <i class="fas fa-robot"></i> IA avanzada
     </div>
@@ -214,7 +237,7 @@
 
 <div class="main">
     <div class="header">
-        <h1>🔧 OPENFORGE AI <span class="badge badge-auto">10 HERRAMIENTAS</span><span class="badge badge-live">LIVE</span></h1>
+        <h1>🔧 OPENFORGE AI <span class="badge badge-auto">CONECTORES</span><span class="badge badge-live">LIVE</span></h1>
     </div>
 
     <div class="mode-switch">
@@ -222,7 +245,6 @@
         <button data-modo="basico">⚡ BÁSICO</button>
     </div>
 
-    <!-- BARRA DE HERRAMIENTAS ADICIONALES (10 MECANISMOS) -->
     <div class="tools-bar">
         <button class="tool-btn" id="btnExplainCode"><i class="fas fa-comment-dots"></i> Explicar Código</button>
         <button class="tool-btn" id="btnConvertLang"><i class="fas fa-exchange-alt"></i> Convertir Lenguaje</button>
@@ -257,23 +279,16 @@ Ej: 'Explica este código Python...'
             <div class="panel-title"><i class="fas fa-terminal"></i> ✨ RESULTADO</div>
             <div class="output-box" id="codeOutput">🧬 **OpenForge AI listo.**
 
-**Automatizaciones disponibles:**
-▶ Ejecutar - Genera código funcional
-🔍 Depurar - Encuentra y arregla errores
-⚡ Optimizar - Mejora rendimiento
-🧪 Tests - Crea pruebas unitarias
-📚 Documentar - Genera documentación
-🔌 API - Crea APIs completas
-🧬 Lenguaje - Diseña nuevos lenguajes
-📦 Docker - Containeriza tu app
-
-**10 herramientas adicionales arriba.**
+**Conectores activos:**
+🧠 Memoria - Recuerda tu código
+🔍 Semántico - Busca patrones
+🌐 APIs - Documentación externa
+📊 Contexto - Historial de desarrollo
 
 **Selecciona una acción en el menú lateral.**</div>
         </div>
     </div>
 
-    <!-- WIDGETS INDEPENDIENTES -->
     <div class="widget-container" id="widgetContainer">
         <div class="widget" id="widgetMetricas">
             <div class="widget-title">📊 Estadísticas del Código</div>
@@ -281,7 +296,7 @@ Ej: 'Explica este código Python...'
                 <div class="metrics-grid-widget">
                     <div class="metric-item-widget">
                         <div class="metric-value-widget" id="metricLineas">0</div>
-                        <div class="metric-label-widget">Líneas de Código</div>
+                        <div class="metric-label-widget">Líneas</div>
                     </div>
                     <div class="metric-item-widget">
                         <div class="metric-value-widget" id="metricComplejidad">0</div>
@@ -298,6 +313,29 @@ Ej: 'Explica este código Python...'
                 </div>
             </div>
         </div>
+        <div class="widget" id="widgetConectores">
+            <div class="widget-title">🔌 Estado de Conectores</div>
+            <div class="widget-content">
+                <div class="connector-metrics">
+                    <div class="connector-metric">
+                        <div class="value" id="metricMemoria">0</div>
+                        <div class="label">Memoria</div>
+                    </div>
+                    <div class="connector-metric">
+                        <div class="value" id="metricSemantico">0</div>
+                        <div class="label">Semántico</div>
+                    </div>
+                    <div class="connector-metric">
+                        <div class="value" id="metricAPIs">0</div>
+                        <div class="label">APIs</div>
+                    </div>
+                    <div class="connector-metric">
+                        <div class="value" id="metricContexto">0%</div>
+                        <div class="label">Contexto</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="widget" id="widgetConfianza">
             <div class="widget-title">🎯 Confianza del Código</div>
             <div class="widget-content">
@@ -309,17 +347,7 @@ Ej: 'Explica este código Python...'
                     <span class="confidence-label" id="confidenceLabel">0%</span>
                 </div>
                 <div id="widgetConfianzaDetalle" style="font-size:0.65rem;color:#8b949e;margin-top:6px;">
-                    Basado en calidad y buenas prácticas
-                </div>
-            </div>
-        </div>
-        <div class="widget" id="widgetFuentes">
-            <div class="widget-title">📚 Bibliotecas Detectadas</div>
-            <div class="widget-content">
-                <div class="sources-list" id="sourcesList">
-                    <div style="color:#8b949e;font-size:0.65rem;">Librerías y dependencias</div>
-                    <div class="source-item"><span class="source-icon">📦</span> Detección automática</div>
-                    <div class="source-item"><span class="source-icon">🔧</span> Análisis de imports</div>
+                    Basado en calidad + conectores
                 </div>
             </div>
         </div>
@@ -336,22 +364,237 @@ Ej: 'Explica este código Python...'
         </div>
     </div>
 
-    <!-- METADATOS JSON-LD (oculto) -->
     <div class="metadata-container" id="metadataContainer"></div>
 
-    <!-- PUBLICIDAD -->
     <div class="ad-container">
         <div class="ad-label">⚡ PATROCINADORES ⚡</div>
         <a href="#" target="_blank" rel="nofollow" style="background: linear-gradient(90deg, #e9c46a, #f4a261); color: #1a222c; padding: 6px 15px; border-radius: 30px; text-decoration: none; font-size: 0.65rem; font-weight: bold; margin: 3px; display: inline-block;">🎮 OFERTA 1</a>
         <a href="#" target="_blank" rel="nofollow" style="background: linear-gradient(90deg, #2a9d8f, #264653); color: white; padding: 6px 15px; border-radius: 30px; text-decoration: none; font-size: 0.65rem; font-weight: bold; margin: 3px; display: inline-block;">🎲 OFERTA 2</a>
     </div>
 
-    <div class="info-footer">🔧 OpenForge AI · 10 herramientas · Laboratorio Automatizado · Blindado 96% · Sin markdown</div>
+    <div class="info-footer">🔧 OpenForge AI · Conectores activos · Laboratorio Automatizado · Blindado 96%</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsllm7@0.1.0/jsllm7.js"></script>
 
 <script>
+    // ============================================
+    // CONECTOR DE MEMORIA
+    // ============================================
+    
+    class MemoryConnector {
+        constructor() {
+            this.shortTerm = [];
+            this.longTerm = new Map();
+            this.maxShortTerm = 10;
+            this.loadFromStorage();
+        }
+        
+        loadFromStorage() {
+            try {
+                const data = JSON.parse(localStorage.getItem('openforge_memoria') || '{}');
+                if (data.shortTerm) this.shortTerm = data.shortTerm;
+                if (data.longTerm) {
+                    this.longTerm = new Map(Object.entries(data.longTerm));
+                }
+            } catch(e) {}
+        }
+        
+        saveToStorage() {
+            try {
+                localStorage.setItem('openforge_memoria', JSON.stringify({
+                    shortTerm: this.shortTerm,
+                    longTerm: Object.fromEntries(this.longTerm)
+                }));
+            } catch(e) {}
+        }
+        
+        remember(interaction) {
+            this.shortTerm.push({
+                ...interaction,
+                timestamp: Date.now()
+            });
+            if (this.shortTerm.length > this.maxShortTerm) {
+                this.shortTerm.shift();
+            }
+            this.saveToStorage();
+        }
+        
+        recall(query, limit = 3) {
+            const relevant = this.shortTerm
+                .filter(item => {
+                    const similarity = this.calculateSimilarity(query, item.query || '');
+                    return similarity > 0.2;
+                })
+                .sort((a, b) => b.similarity - a.similarity)
+                .slice(0, limit);
+            
+            return relevant.map(item => ({
+                query: item.query,
+                response: item.response,
+                similarity: item.similarity,
+                action: item.action
+            }));
+        }
+        
+        calculateSimilarity(a, b) {
+            if (!a || !b) return 0;
+            const wordsA = a.toLowerCase().split(' ');
+            const wordsB = b.toLowerCase().split(' ');
+            const common = wordsA.filter(w => wordsB.includes(w) && w.length > 2);
+            return common.length / Math.max(wordsA.length, wordsB.length);
+        }
+        
+        getStats() {
+            return {
+                shortTerm: this.shortTerm.length,
+                longTerm: this.longTerm.size,
+                total: this.shortTerm.length + this.longTerm.size
+            };
+        }
+    }
+
+    // ============================================
+    // CONECTOR SEMÁNTICO
+    // ============================================
+    
+    class SemanticConnector {
+        constructor() {
+            this.embeddingsCache = new Map();
+            this.similarityThreshold = 0.2;
+        }
+        
+        generateEmbedding(text) {
+            const words = text.toLowerCase()
+                .replace(/[¿?¡!.,;:]/g, '')
+                .split(' ')
+                .filter(w => w.length > 2);
+            
+            const vector = new Map();
+            words.forEach(w => {
+                vector.set(w, (vector.get(w) || 0) + 1);
+            });
+            return vector;
+        }
+        
+        cosineSimilarity(vecA, vecB) {
+            let dotProduct = 0;
+            let normA = 0;
+            let normB = 0;
+            
+            const keys = new Set([...vecA.keys(), ...vecB.keys()]);
+            keys.forEach(key => {
+                const a = vecA.get(key) || 0;
+                const b = vecB.get(key) || 0;
+                dotProduct += a * b;
+                normA += a * a;
+                normB += b * b;
+            });
+            
+            if (normA === 0 || normB === 0) return 0;
+            return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+        }
+        
+        findSimilar(query, candidates) {
+            const queryEmbedding = this.generateEmbedding(query);
+            const results = candidates.map(candidate => ({
+                ...candidate,
+                similarity: this.cosineSimilarity(queryEmbedding, this.generateEmbedding(candidate.text || candidate.query || ''))
+            }));
+            
+            return results
+                .filter(r => r.similarity > this.similarityThreshold)
+                .sort((a, b) => b.similarity - a.similarity);
+        }
+        
+        getStats() {
+            return {
+                cacheSize: this.embeddingsCache.size,
+                threshold: this.similarityThreshold
+            };
+        }
+    }
+
+    // ============================================
+    // CONECTOR DE APIs
+    // ============================================
+    
+    class APIConnector {
+        constructor() {
+            this.endpoints = new Map();
+            this.cache = new Map();
+            this.maxCacheAge = 3600000;
+            this.registerDefaultEndpoints();
+        }
+        
+        registerDefaultEndpoints() {
+            this.registerEndpoint('docs', {
+                url: 'https://api.example.com/docs',
+                method: 'GET',
+                transform: (data) => ({
+                    documentacion: data.documentacion || [],
+                    ejemplos: data.ejemplos || {}
+                })
+            });
+        }
+        
+        registerEndpoint(name, config) {
+            this.endpoints.set(name, config);
+        }
+        
+        async call(endpointName, params = {}) {
+            const config = this.endpoints.get(endpointName);
+            if (!config) {
+                return { error: `Endpoint ${endpointName} no encontrado` };
+            }
+            
+            const cacheKey = `${endpointName}_${JSON.stringify(params)}`;
+            if (this.cache.has(cacheKey)) {
+                const cached = this.cache.get(cacheKey);
+                if (Date.now() - cached.timestamp < this.maxCacheAge) {
+                    return cached.data;
+                }
+            }
+            
+            try {
+                const mockData = this.generateMockData(endpointName, params);
+                const result = config.transform ? config.transform(mockData) : mockData;
+                this.cache.set(cacheKey, {
+                    data: result,
+                    timestamp: Date.now()
+                });
+                return result;
+            } catch(e) {
+                return { error: e.message };
+            }
+        }
+        
+        generateMockData(endpoint, params) {
+            const datos = {
+                docs: {
+                    documentacion: ['Documentación 1', 'Documentación 2'],
+                    ejemplos: { python: 'print("Hello")' }
+                }
+            };
+            return datos[endpoint] || {};
+        }
+        
+        getStats() {
+            return {
+                endpoints: this.endpoints.size,
+                cacheSize: this.cache.size
+            };
+        }
+    }
+
+    // ============================================
+    // INICIALIZACIÓN DE CONECTORES
+    // ============================================
+    
+    const memoryConnector = new MemoryConnector();
+    const semanticConnector = new SemanticConnector();
+    const apiConnector = new APIConnector();
+
     // ============================================
     // SISTEMA DE CACHÉ SEMÁNTICO
     // ============================================
@@ -368,7 +611,24 @@ Ej: 'Explica este código Python...'
             .join('_');
         return words;
     }
+
+    // ============================================
+    // ACTUALIZAR MÉTRICAS DE CONECTORES
+    // ============================================
     
+    function actualizarMetricasConectores() {
+        const memStats = memoryConnector.getStats();
+        const semStats = semanticConnector.getStats();
+        const apiStats = apiConnector.getStats();
+        
+        document.getElementById('metricMemoria').textContent = memStats.total;
+        document.getElementById('metricSemantico').textContent = semStats.cacheSize;
+        document.getElementById('metricAPIs').textContent = apiStats.endpoints;
+        
+        const contextoPorcentaje = Math.min(100, (memStats.shortTerm * 10) + 20);
+        document.getElementById('metricContexto').textContent = Math.min(contextoPorcentaje, 100) + '%';
+    }
+
     // ============================================
     // GENERAR METADATOS JSON-LD
     // ============================================
@@ -382,20 +642,18 @@ Ej: 'Explica este código Python...'
             "programmingLanguage": lenguaje || "Python",
             "dateCreated": new Date().toISOString(),
             "confidenceScore": confianza,
-            "description": "Código procesado por OpenForge AI"
+            "description": "Código procesado con conectores"
         };
     }
-    
+
     // ============================================
     // ACTUALIZAR WIDGETS
     // ============================================
     
     function actualizarWidgets(codigo, resultado) {
-        // Contar líneas
         const lineas = codigo.split('\n').filter(l => l.trim().length > 0).length;
         document.getElementById('metricLineas').textContent = lineas || 0;
         
-        // Detectar lenguajes comunes
         const lenguajes = new Set();
         const lower = codigo.toLowerCase();
         if (lower.includes('def ') || lower.includes('import ') || lower.includes('print(')) lenguajes.add('🐍 Python');
@@ -409,15 +667,12 @@ Ej: 'Explica este código Python...'
         if (lenguajes.size === 0) lenguajes.add('📝 Texto');
         document.getElementById('metricLenguajes').textContent = lenguajes.size;
         
-        // Complejidad estimada
         const complejidad = Math.min(95, 30 + (lineas * 0.3) + (codigo.split('if').length * 2) + (codigo.split('for').length * 3));
         document.getElementById('metricComplejidad').textContent = Math.round(complejidad);
         
-        // Optimización
         const optimizacion = Math.min(95, 50 + (lineas > 10 ? 10 : 0) + (codigo.split('def').length > 0 ? 10 : 0) + (codigo.match(/[{}]/g) || []).length > 0 ? 10 : 0);
         document.getElementById('metricOptimizacion').textContent = Math.round(optimizacion) + '%';
         
-        // Calcular confianza
         let confianza = 70;
         if (lineas > 5) confianza += 5;
         if (lineas > 20) confianza += 5;
@@ -429,7 +684,6 @@ Ej: 'Explica este código Python...'
         document.getElementById('confidenceFill').style.width = confianza + '%';
         document.getElementById('confidenceLabel').textContent = Math.round(confianza) + '%';
         
-        // Actualizar lenguaje detectado
         const langContent = document.getElementById('widgetLenguajeContent');
         const langArray = Array.from(lenguajes);
         langContent.innerHTML = `
@@ -442,19 +696,19 @@ Ej: 'Explica este código Python...'
             </div>
         `;
         
-        // Generar metadatos JSON-LD
         const primerLenguaje = langArray[0]?.replace(/[^a-zA-Z]/g, '') || 'Python';
         const metadatos = generarMetadatos(codigo, resultado, confianza, primerLenguaje);
         document.getElementById('metadataContainer').innerHTML = `<script type="application/ld+json">${JSON.stringify(metadatos)}<\/script>`;
         
-        // Deep linking
         if (history.pushState && codigo.length > 20) {
             const url = new URL(window.location);
             url.searchParams.set('code', encodeURIComponent(codigo.substring(0, 100)));
             window.history.pushState({}, '', url);
         }
+        
+        actualizarMetricasConectores();
     }
-    
+
     // ============================================
     // SISTEMA DE CACHÉ
     // ============================================
@@ -487,7 +741,7 @@ Ej: 'Explica este código Python...'
         }
         localStorage.setItem('_openforge_v3', JSON.stringify(_cache));
     }
-    
+
     // ============================================
     // FUNCIONES PRINCIPALES
     // ============================================
@@ -532,12 +786,28 @@ Ej: 'Explica este código Python...'
     async function llamarIA(prompt) {
         const semanticKey = getSemanticKey(prompt);
         
-        // Verificar caché semántico
+        // 1. Verificar caché semántico
         if (semanticCache.has(semanticKey)) {
             const cached = semanticCache.get(semanticKey);
             if (Date.now() - cached.timestamp < 86400000) {
                 return cached.data;
             }
+        }
+        
+        // 2. Buscar en memoria código similar
+        const memoriaSimilar = memoryConnector.recall(prompt, 2);
+        let contextoMemoria = '';
+        if (memoriaSimilar.length > 0) {
+            contextoMemoria = '\n\n[Contexto de memoria de código:] ' + memoriaSimilar.map(m => 
+                `Código similar anterior (${m.action}): "${m.response.substring(0, 80)}..."`
+            ).join(' ');
+        }
+        
+        // 3. Consultar API para documentación
+        const apiData = await apiConnector.call('docs');
+        let contextoAPI = '';
+        if (!apiData.error) {
+            contextoAPI = `\n\n[Documentación externa:] ${apiData.documentacion?.join(', ') || ''}`;
         }
         
         const cached = _obtenerCache(prompt);
@@ -547,10 +817,22 @@ Ej: 'Explica este código Python...'
         }
         
         try {
-            const respuesta = await jsllm7(prompt);
+            let promptFinal = prompt;
+            if (contextoMemoria) promptFinal += `\n${contextoMemoria}`;
+            if (contextoAPI) promptFinal += `\n${contextoAPI}`;
+            
+            const respuesta = await jsllm7(promptFinal);
             if (respuesta && respuesta.length > 20) {
                 _guardarCache(prompt, respuesta);
                 semanticCache.set(semanticKey, { data: respuesta, timestamp: Date.now() });
+                
+                // Guardar en memoria
+                memoryConnector.remember({
+                    query: prompt,
+                    response: respuesta,
+                    action: currentAction
+                });
+                actualizarMetricasConectores();
                 return respuesta;
             }
         } catch (e) {
@@ -560,7 +842,7 @@ Ej: 'Explica este código Python...'
         semanticCache.set(semanticKey, { data: fallback, timestamp: Date.now() });
         return fallback;
     }
-    
+
     // ============================================
     // DEEP LINKING - CARGAR DESDE URL
     // ============================================
@@ -576,124 +858,113 @@ Ej: 'Explica este código Python...'
             }, 1000);
         }
     }
-    
+
     // ============================================
     // 10 HERRAMIENTAS ADICIONALES
     // ============================================
     
-    // 1. Explicar Código
     async function explainCode() {
         const codigo = document.getElementById('codeInput').value.trim();
         if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
-        showToast('📖 Explicando código...');
+        showToast('📖 Explicando código con conectores...');
         const prompt = `Explica este código paso a paso en español, como si enseñaras a un programador junior. Incluye qué hace, cómo funciona y posibles mejoras. Código:\n\n${codigo}\n\nExplicación (sin asteriscos):`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('📖 EXPLICACIÓN DE CÓDIGO', respuesta);
         actualizarWidgets(codigo, respuesta);
     }
     
-    // 2. Convertir Lenguaje
     async function convertLanguage() {
         const codigo = document.getElementById('codeInput').value.trim();
         if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
         const target = prompt('¿A qué lenguaje quieres convertir? (Python, JavaScript, Java, C++, Go, Rust, TypeScript):', 'Python');
         if (!target) return;
-        showToast(`🔄 Convirtiendo a ${target}...`);
+        showToast(`🔄 Convirtiendo a ${target} con conectores...`);
         const prompt = `Convierte el siguiente código a ${target}. Mantén la misma lógica y funcionalidad. Lenguaje origen: detectar automáticamente. Código:\n\n${codigo}\n\nCódigo convertido a ${target} (solo código, sin explicaciones):`;
         const respuesta = await llamarIA(prompt);
         mostrarModal(`🔄 CONVERTIDO A ${target.toUpperCase()}`, respuesta);
         actualizarWidgets(codigo, respuesta);
     }
     
-    // 3. Seguridad
     async function securityCheck() {
         const codigo = document.getElementById('codeInput').value.trim();
         if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
-        showToast('🛡️ Analizando seguridad...');
+        showToast('🛡️ Analizando seguridad con conectores...');
         const prompt = `Analiza este código en busca de vulnerabilidades de seguridad. Lista las vulnerabilidades encontradas y sugiere soluciones. Código:\n\n${codigo}\n\nAnálisis de seguridad:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('🛡️ ANÁLISIS DE SEGURIDAD', respuesta);
         actualizarWidgets(codigo, respuesta);
     }
     
-    // 4. Complejidad
     async function complexity() {
         const codigo = document.getElementById('codeInput').value.trim();
         if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
-        showToast('📊 Analizando complejidad...');
+        showToast('📊 Analizando complejidad con conectores...');
         const prompt = `Analiza la complejidad temporal y espacial de este código. Calcula la notación Big O y explica por qué. Sugiere optimizaciones si es posible. Código:\n\n${codigo}\n\nAnálisis de complejidad:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('📊 COMPLEJIDAD DEL CÓDIGO', respuesta);
         actualizarWidgets(codigo, respuesta);
     }
     
-    // 5. Generar Regex
     async function generateRegex() {
         const descripcion = document.getElementById('codeInput').value.trim();
         if (!descripcion) { showToast('⚠️ Describe el patrón que buscas', true); return; }
-        showToast('🎩 Generando expresión regular...');
+        showToast('🎩 Generando regex con conectores...');
         const prompt = `Genera una expresión regular (regex) en español para: ${descripcion}. Explica qué hace cada parte y da ejemplos de coincidencias. Patrón Regex:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('🎩 EXPRESIÓN REGULAR', respuesta);
         actualizarWidgets(descripcion, respuesta);
     }
     
-    // 6. Optimizar SQL
     async function optimizeSQL() {
         const sql = document.getElementById('codeInput').value.trim();
         if (!sql) { showToast('⚠️ Escribe tu consulta SQL', true); return; }
-        showToast('💾 Optimizando consulta SQL...');
+        showToast('💾 Optimizando SQL con conectores...');
         const prompt = `Optimiza la siguiente consulta SQL para mejorar su rendimiento. Sugiere índices, reescriburas y explica las mejoras. Consulta:\n\n${sql}\n\nConsulta optimizada y explicación:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('💾 SQL OPTIMIZADO', respuesta);
         actualizarWidgets(sql, respuesta);
     }
     
-    // 7. Commit Message
     async function commitMessage() {
         const diff = document.getElementById('codeInput').value.trim();
         if (!diff) { showToast('⚠️ Describe los cambios o pega un diff', true); return; }
-        showToast('📝 Generando mensaje de commit...');
+        showToast('📝 Generando commit con conectores...');
         const prompt = `Genera un mensaje de commit claro y conciso siguiendo buenas prácticas (Conventional Commits). Cambios:\n\n${diff}\n\nMensaje de commit:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('📝 MENSAJE DE COMMIT', respuesta);
         actualizarWidgets(diff, respuesta);
     }
     
-    // 8. Code Review
     async function codeReview() {
         const codigo = document.getElementById('codeInput').value.trim();
         if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
-        showToast('🔍 Realizando code review...');
+        showToast('🔍 Code review con conectores...');
         const prompt = `Realiza una revisión de código profesional (code review) sobre este código. Evalúa: estilo, posibles bugs, mantenibilidad, y sugiere mejoras específicas. Código:\n\n${codigo}\n\nCode Review:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('🔍 CODE REVIEW', respuesta);
         actualizarWidgets(codigo, respuesta);
     }
     
-    // 9. API Test
     async function apiTest() {
         const apiDesc = document.getElementById('codeInput').value.trim();
         if (!apiDesc) { showToast('⚠️ Describe la API a testear', true); return; }
-        showToast('🧪 Generando tests de API...');
+        showToast('🧪 Generando tests API con conectores...');
         const prompt = `Genera tests automatizados para esta API (usa pytest o similar). Describe: ${apiDesc}. Incluye casos positivos, negativos y edge cases. Tests:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('🧪 TESTS DE API', respuesta);
         actualizarWidgets(apiDesc, respuesta);
     }
     
-    // 10. Performance
     async function performance() {
         const codigo = document.getElementById('codeInput').value.trim();
         if (!codigo) { showToast('⚠️ Escribe o pega código primero', true); return; }
-        showToast('⚡ Analizando rendimiento...');
+        showToast('⚡ Analizando rendimiento con conectores...');
         const prompt = `Analiza el rendimiento de este código. Identifica cuellos de botella, sugiere optimizaciones y estima la mejora. Código:\n\n${codigo}\n\nAnálisis de rendimiento:`;
         const respuesta = await llamarIA(prompt);
         mostrarModal('⚡ ANÁLISIS DE RENDIMIENTO', respuesta);
         actualizarWidgets(codigo, respuesta);
     }
     
-    // Asignar botones de herramientas
     document.getElementById('btnExplainCode').onclick = explainCode;
     document.getElementById('btnConvertLang').onclick = convertLanguage;
     document.getElementById('btnSecurityCheck').onclick = securityCheck;
@@ -704,7 +975,7 @@ Ej: 'Explica este código Python...'
     document.getElementById('btnCodeReview').onclick = codeReview;
     document.getElementById('btnApiTest').onclick = apiTest;
     document.getElementById('btnPerformance').onclick = performance;
-    
+
     // ============================================
     // ACCIONES PRINCIPALES
     // ============================================
@@ -734,20 +1005,18 @@ Ej: 'Explica este código Python...'
             return;
         }
         const output = document.getElementById('codeOutput');
-        output.innerHTML = '<span style="color:#8b949e;"><span class="loading-spinner"></span> OpenForge trabajando...</span>';
+        output.innerHTML = '<span style="color:#8b949e;"><span class="loading-spinner"></span> OpenForge trabajando con conectores...</span>';
         
         const esExperto = modo === 'experto';
-        const prompt = `${ACTION_PROMPTS[currentAction]}"""${input}""" ${esExperto ? 'Da una respuesta detallada y profesional.' : 'Da una respuesta clara y directa.'} NO uses asteriscos.`;
+        let prompt = `${ACTION_PROMPTS[currentAction]}"""${input}""" ${esExperto ? 'Da una respuesta detallada y profesional.' : 'Da una respuesta clara y directa.'} NO uses asteriscos.`;
         
         let respuesta = await llamarIA(prompt);
         if (!respuesta) respuesta = `// OpenForge AI procesando...\n// Tu ${currentAction} aparecerá aquí.`;
         
         output.innerHTML = respuesta;
-        
-        // Actualizar widgets
         actualizarWidgets(input, respuesta);
         
-        showToast('✅ Completado');
+        showToast('✅ Completado con conectores');
     }
     
     document.getElementById('btnRun').addEventListener('click', () => {
@@ -789,15 +1058,15 @@ Ej: 'Explica este código Python...'
     
     // Inicialización
     cargarDesdeURL();
+    actualizarMetricasConectores();
     
     let intentos = 0;
     const check = setInterval(() => {
         if (typeof jsllm7 !== 'undefined') {
             clearInterval(check);
-            showToast('🔧 OpenForge AI listo · 10 herramientas disponibles · Widgets inteligentes');
-            // Inicializar widgets con mensaje por defecto
+            showToast('🔧 OpenForge AI listo · Conectores activos · 10 herramientas disponibles');
             const defaultCode = document.getElementById('codeInput').value.trim() || '// Esperando código...';
-            actualizarWidgets(defaultCode, 'OpenForge AI listo');
+            actualizarWidgets(defaultCode, 'OpenForge AI listo con conectores');
         } else if (intentos > 30) clearInterval(check);
         intentos++;
     }, 500);
